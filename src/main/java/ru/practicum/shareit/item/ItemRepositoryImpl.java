@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,23 +47,25 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item update(Item item) {
+        Item updatedItem = items.get(item.getId());
+
         if (item.getName() != null) {
-            items.get(item.getId()).setName(item.getName());
+            updatedItem.setName(item.getName());
         }
         if (item.getDescription() != null) {
-            items.get(item.getId()).setDescription(item.getDescription());
+            updatedItem.setDescription(item.getDescription());
         }
         if (item.getAvailable() != null) {
-            items.get(item.getId()).setAvailable(item.getAvailable());
+            updatedItem.setAvailable(item.getAvailable());
         }
         if (item.getName() != null) {
-            items.get(item.getId()).setOwner(item.getOwner());
+            updatedItem.setOwner(item.getOwner());
         }
         if (item.getRequest() != null) {
-            items.get(item.getId()).setRequest(item.getRequest());
+            updatedItem.setRequest(item.getRequest());
         }
 
-        return items.get(item.getId());
+        return updatedItem;
     }
 
     @Override
@@ -74,20 +75,11 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Set<Item> search(String text) {
-        Set<Item> foundInNames = items.values().stream()
+        return items.values().stream()
                 .filter(item -> item.getOwner() != null)
                 .filter(Item::getAvailable)
-                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase()))
+                .filter(item -> item.getName().toLowerCase().contains(text.toLowerCase())
+                        || item.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .collect(Collectors.toSet());
-
-        Set<Item> foundInDescriptions = items.values().stream()
-                .filter(item -> item.getOwner() != null)
-                .filter(Item::getAvailable)
-                .filter(item -> item.getDescription().toLowerCase().contains(text.toLowerCase()))
-                .collect(Collectors.toSet());
-
-        Set<Item> foundTotal = new HashSet<>(foundInNames);
-        foundTotal.addAll(foundInDescriptions);
-        return foundTotal;
     }
 }

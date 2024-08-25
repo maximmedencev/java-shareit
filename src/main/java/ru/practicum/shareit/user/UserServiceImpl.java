@@ -18,13 +18,8 @@ import java.util.regex.Pattern;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
-    private boolean isEmailValid(String email) {
-        Pattern validEmailAddressRegex =
-                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = validEmailAddressRegex.matcher(email);
-        return matcher.matches();
-    }
-
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     @Override
     public UserDto create(User user) {
@@ -84,6 +79,11 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(userId);
         log.info("Удален пользователь с id ={}", userId);
 
+    }
+
+    private boolean isEmailValid(String email) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        return matcher.matches();
     }
 
 }

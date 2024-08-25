@@ -20,10 +20,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository items;
     private final UserRepository users;
 
-    private boolean isUserValid(long sharerId, long itemId) {
-        return sharerId == items.getOwnerId(itemId);
-    }
-
     @Override
     public ItemDto create(long sharerId, Item item) {
         log.info("Добавляем вещь {}", item);
@@ -96,6 +92,10 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
         log.info("Результаты поиска вещи по строке {} {}", text, searchResult);
         return searchResult;
+    }
+
+    private boolean isUserValid(long sharerId, long itemId) {
+        return sharerId == items.getOwnerId(itemId);
     }
 
 }

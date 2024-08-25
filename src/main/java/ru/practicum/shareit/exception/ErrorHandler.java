@@ -39,13 +39,19 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResponse handleNotValidData(final MethodArgumentNotValidException e) {
-        return new ErrorResponse("error", "Запрос содержит невалидные данные");
+
+        String errorMessage = "Запрос содержит невалидные данные: поле "
+                + e.getFieldError().getField()
+                + " "
+                + e.getFieldError().getDefaultMessage();
+
+        return new ErrorResponse("error", errorMessage);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResponse handleNotValidData(final InvalidDataException e) {
-        return new ErrorResponse("error", "Запрос содержит невалидные данные");
+        return new ErrorResponse("error", "Запрос содержит невалидные данные " + e.getMessage());
     }
 
 
