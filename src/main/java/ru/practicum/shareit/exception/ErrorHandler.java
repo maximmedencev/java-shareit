@@ -18,9 +18,33 @@ public class ErrorHandler {
         return new ErrorResponse("error", "Произошла непредвиденная ошибка");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResponse handleNoItemBookingsForTheUser(final NoItemBookingsForThisUserException e) {
+        return new ErrorResponse("error", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResponse handleWrongUserApprove(final BookingUnavailableItemException e) {
+        return new ErrorResponse("error", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler
+    public ErrorResponse handleWrongUser(final WrongUserException e) {
+        return new ErrorResponse("error", e.getMessage());
+    }
+
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler
     public ErrorResponse duplicateEmail(final DuplicateEmailException e) {
+        return new ErrorResponse("error", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResponse handleWrongUserApprove(final BookingApproveByWrongUserException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
@@ -53,7 +77,6 @@ public class ErrorHandler {
     public ErrorResponse handleNotValidData(final InvalidDataException e) {
         return new ErrorResponse("error", "Запрос содержит невалидные данные " + e.getMessage());
     }
-
 
     @Getter
     private static class ErrorResponse {

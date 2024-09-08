@@ -24,11 +24,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto create(User user) {
         log.info("Обновление пользователя  {}", user);
-        if (userRepository.isEmailExistInRepository(user.getEmail())) {
+
+        if (userRepository.existsByEmail(user.getEmail())) {
             log.error("Email " + user.getEmail() + " уже занят");
             throw new DuplicateEmailException("Email " + user.getEmail() + " уже занят");
         }
-        UserDto userDto = UserMapper.mapToUserDto(userRepository.create(user));
+
+        UserDto userDto = UserMapper.mapToUserDto(userRepository.save(user));
         log.info("Создан пользователь  {}", user);
         return userDto;
 
@@ -37,7 +39,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto read(long userId) {
         log.info("Чтение пользователя c id =  {}", userId);
-        UserDto userDto = UserMapper.mapToUserDto(userRepository.read(userId));
+        UserDto userDto = UserMapper.mapToUserDto(userRepository
+                .findById(userId)
+                .orElse(new User()));
         log.info("Прочитан пользователь c id =  {} {}", userId, userDto);
         return userDto;
     }
@@ -45,7 +49,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Collection<UserDto> readAll() {
         log.info("Чтение всех пользователей");
-        Collection<UserDto> allUsers = userRepository.readAll().stream()
+        Collection<UserDto> allUsers = userRepository.findAll().stream()
                 .map(UserMapper::mapToUserDto)
                 .toList();
         log.info("Прочитаны пользователи {}", allUsers);
@@ -55,6 +59,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(long userId, User updUser) {
         updUser.setId(userId);
+
+        UserDto userDto = UserMapper.mapToUserDto(updUser);
+
         log.info("Обновление пользователя id = {} {}", userId, updUser);
         if (updUser.getEmail() != null) {
             if (updUser.getEmail().isEmpty()
@@ -62,13 +69,23 @@ public class UserServiceImpl implements UserService {
                 log.error("Введен невалидный email");
                 throw new InvalidDataException("Введен невалидный email = " + updUser.getEmail());
             }
-            if (userRepository.isEmailExistInRepository(updUser.getEmail())) {
+            if (userRepository.existsByEmail(updUser.getEmail())) {
                 log.error("Email " + updUser.getEmail() + " уже занят");
                 throw new DuplicateEmailException("Email " + updUser.getEmail() + " уже занят");
             }
+        } else {
+            userRepository.updateName(userId, updUser.getName());
+            log.info("Обновлен пользователь {}", userDto);
+            return userDto;
         }
 
-        UserDto userDto = UserMapper.mapToUserDto(userRepository.update(updUser));
+        if (updUser.getName() == null && updUser.getEmail() != null) {
+            userRepository.updateEmail(userId, updUser.getEmail());
+            log.info("Обновлен пользователь {}", userDto);
+            return userDto;
+        }
+
+        userDto = UserMapper.mapToUserDto(userRepository.save(updUser));
         log.info("Обновлен пользователь {}", userDto);
         return userDto;
     }
@@ -76,7 +93,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(long userId) {
         log.info("Удаление пользователя с id = {}", userId);
-        userRepository.delete(userId);
+        userRepository.deleteById(userId);
         log.info("Удален пользователь с id ={}", userId);
 
     }
