@@ -73,10 +73,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "AND b.start_date >= :nowTimeStamp", nativeQuery = true)
     LocalDateTime findNextBookingStartDate(Long itemId, Timestamp nowTimeStamp);
 
-    @Query(value = "SELECT(EXISTS(SELECT FROM bookings WHERE booker_id = :userId " +
+    @Query(value = "SELECT EXISTS(SELECT FROM bookings WHERE booker_id = :userId " +
             "AND item_id = :itemId " +
             "AND status = 'APPROVED'" +
-            "AND end_date < :nowTimeStamp))", nativeQuery = true)
+            "AND end_date < :nowTimeStamp)", nativeQuery = true)
     Boolean isUserBookedTheItem(Long itemId, Long userId, Timestamp nowTimeStamp);
 
 }

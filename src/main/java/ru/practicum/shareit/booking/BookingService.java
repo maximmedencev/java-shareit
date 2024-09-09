@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingParamDto;
@@ -32,6 +33,7 @@ public class BookingService {
     private final UserRepository users;
 
 
+    @Transactional
     public BookingDto save(Long sharerId, BookingParamDto bookingParamDto) {
 
         log.info("Начало создания бронирования {} пользователем c id {}", bookingParamDto, sharerId);
@@ -81,6 +83,7 @@ public class BookingService {
         return BookingMapper.mapToBookingDto(bookings.save(booking));
     }
 
+    @Transactional
     public BookingDto setApproved(Long bookingId, Long sharerId, Boolean approved) {
         log.info("Начало установки статуса approved = {} бронированию с id = {} пользователем с id = {}",
                 approved, bookingId, sharerId);

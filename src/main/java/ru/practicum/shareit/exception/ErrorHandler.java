@@ -19,14 +19,15 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ErrorResponse handleNoItemBookingsForTheUser(final NoItemBookingsForThisUserException e) {
-        return new ErrorResponse("error", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ErrorResponse handleWrongUserApprove(final BookingUnavailableItemException e) {
+    @ExceptionHandler({
+            NoItemBookingsForThisUserException.class,
+            BookingUnavailableItemException.class,
+            BookingUnavailableItemException.class,
+            BookingApproveByWrongUserException.class,
+            NoAvailableFieldException.class,
+            InvalidDataException.class
+    })
+    public ErrorResponse handleInvalidData(final RuntimeException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
@@ -39,18 +40,6 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler
     public ErrorResponse duplicateEmail(final DuplicateEmailException e) {
-        return new ErrorResponse("error", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ErrorResponse handleWrongUserApprove(final BookingApproveByWrongUserException e) {
-        return new ErrorResponse("error", e.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ErrorResponse handleNoAvailableField(final NoAvailableFieldException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
@@ -70,12 +59,6 @@ public class ErrorHandler {
                 + e.getFieldError().getDefaultMessage();
 
         return new ErrorResponse("error", errorMessage);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ErrorResponse handleNotValidData(final InvalidDataException e) {
-        return new ErrorResponse("error", "Запрос содержит невалидные данные " + e.getMessage());
     }
 
     @Getter

@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.exception.InvalidDataException;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -21,6 +22,7 @@ public class UserServiceImpl implements UserService {
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
+    @Transactional
     @Override
     public UserDto create(User user) {
         log.info("Обновление пользователя  {}", user);
@@ -56,6 +58,7 @@ public class UserServiceImpl implements UserService {
         return allUsers;
     }
 
+    @Transactional
     @Override
     public UserDto update(long userId, User updUser) {
         updUser.setId(userId);

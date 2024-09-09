@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.exception.NoAvailableFieldException;
 import ru.practicum.shareit.exception.NoItemBookingsForThisUserException;
@@ -32,6 +33,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookings;
     private final CommentRepository comments;
 
+    @Transactional
     @Override
     public ItemDto create(long sharerId, Item item) {
         log.info("Добавляем вещь {}", item);
@@ -75,6 +77,7 @@ public class ItemServiceImpl implements ItemService {
         return sharerItems;
     }
 
+    @Transactional
     @Override
     public ItemDto update(long itemId, long sharerId, Item item) {
         log.info("Обновление вещи c id = {} пользователя с id = {}", itemId, sharerId);
@@ -119,6 +122,7 @@ public class ItemServiceImpl implements ItemService {
         return searchResult;
     }
 
+    @Transactional
     @Override
     public CommentDto createComment(long sharerId, long itemId, CommentParamDto commentParamDto) {
         log.info("Добавляем комментарий {}", commentParamDto);
