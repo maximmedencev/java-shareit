@@ -18,15 +18,28 @@ public class ErrorHandler {
         return new ErrorResponse("error", "Произошла непредвиденная ошибка");
     }
 
-    @ResponseStatus(HttpStatus.CONFLICT)
-    @ExceptionHandler
-    public ErrorResponse duplicateEmail(final DuplicateEmailException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler({
+            NoItemBookingsForThisUserException.class,
+            BookingUnavailableItemException.class,
+            BookingUnavailableItemException.class,
+            BookingApproveByWrongUserException.class,
+            NoAvailableFieldException.class,
+            InvalidDataException.class
+    })
+    public ErrorResponse handleInvalidData(final RuntimeException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler
-    public ErrorResponse handleNoAvailableField(final NoAvailableFieldException e) {
+    public ErrorResponse handleWrongUser(final WrongUserException e) {
+        return new ErrorResponse("error", e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler
+    public ErrorResponse duplicateEmail(final DuplicateEmailException e) {
         return new ErrorResponse("error", e.getMessage());
     }
 
@@ -47,13 +60,6 @@ public class ErrorHandler {
 
         return new ErrorResponse("error", errorMessage);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    public ErrorResponse handleNotValidData(final InvalidDataException e) {
-        return new ErrorResponse("error", "Запрос содержит невалидные данные " + e.getMessage());
-    }
-
 
     @Getter
     private static class ErrorResponse {

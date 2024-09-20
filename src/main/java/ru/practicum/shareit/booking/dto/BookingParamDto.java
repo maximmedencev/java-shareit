@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import ru.practicum.shareit.booking.BookingStatus;
-import ru.practicum.shareit.item.dto.ItemIdAndNameDto;
-import ru.practicum.shareit.user.dto.UserIdOnlyDto;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 
@@ -15,11 +15,12 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @ToString
-public class BookingDto {
+public class BookingParamDto {
     private long id;
     private LocalDateTime start;
     private LocalDateTime end;
-    private UserIdOnlyDto booker;
-    private ItemIdAndNameDto item;
+    private Long itemId;
+    private User booker;
+    private Item item;
     private BookingStatus status;
 }

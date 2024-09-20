@@ -12,11 +12,10 @@ public class UserMapper {
     }
 
     public static User mapToUser(UserDto userDto) {
-        System.out.println(userDto);
-        return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .email(userDto.getEmail())
-                .build();
+        User user = new User();
+        user.setId(userDto.getId());
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        return user;
     }
 }
