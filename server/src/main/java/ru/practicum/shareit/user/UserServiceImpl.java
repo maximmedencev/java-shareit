@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto create(User user) {
-        log.info("Обновление пользователя  {}", user);
+        log.info("Создание пользователя  {}", user);
 
         if (userRepository.existsByEmail(user.getEmail())) {
             log.error("Email " + user.getEmail() + " уже занят");

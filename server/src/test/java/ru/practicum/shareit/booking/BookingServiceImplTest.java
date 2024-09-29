@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingParamDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -77,18 +78,105 @@ public class BookingServiceImplTest {
 
         assertThat(targetBookings.get(1), allOf(
                 hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(booking1.getStart())),
-                hasProperty("end", equalTo(booking1.getEnd())),
-                hasProperty("status", equalTo(booking1.getStatus()))
+                hasProperty("start", equalTo(sourceBookingDtos.get(0).getStart())),
+                hasProperty("end", equalTo(sourceBookingDtos.get(0).getEnd())),
+                hasProperty("status", equalTo(sourceBookingDtos.get(0).getStatus()))
         ));
 
         assertThat(targetBookings.get(0), allOf(
                 hasProperty("id", notNullValue()),
-                hasProperty("start", equalTo(booking2.getStart())),
-                hasProperty("end", equalTo(booking2.getEnd())),
-                hasProperty("status", equalTo(booking2.getStatus()))
+                hasProperty("start", equalTo(sourceBookingDtos.get(1).getStart())),
+                hasProperty("end", equalTo(sourceBookingDtos.get(1).getEnd())),
+                hasProperty("status", equalTo(sourceBookingDtos.get(1).getStatus()))
         ));
+    }
+
+    @DisplayName("Должен создавать бронирование")
+    @Test
+    void shouldCreateBooking() {
+        // given
+        User booker = new User();
+        booker.setName("Ivan");
+        booker.setEmail("ivan@mail.ru");
+        entityManager.persist(booker);
+
+        User owner = new User();
+        owner.setName("Petr");
+        owner.setEmail("petr@mail.ru");
+        entityManager.persist(owner);
+
+        Item item1 = new Item();
+        item1.setName("Item1 name");
+        item1.setDescription("Item1 description");
+        item1.setOwner(owner);
+        item1.setAvailable(true);
+        entityManager.persist(item1);
+
+        entityManager.flush();
+
+        BookingParamDto bookingParamDto = new BookingParamDto();
+        bookingParamDto.setBooker(booker);
+        bookingParamDto.setStart(LocalDateTime.of(2024, 12, 12, 12, 12, 12));
+        bookingParamDto.setEnd(LocalDateTime.of(2024, 12, 13, 13, 13, 13));
+        bookingParamDto.setItem(item1);
+        bookingParamDto.setItemId(item1.getId());
+
+        //when
+        BookingDto sourceBookingDto = bookingService.save(booker.getId(), bookingParamDto);
+
+        //then
+        TypedQuery<Booking> query = entityManager
+                .createQuery("Select b from Booking b where b.id = :id",
+                        Booking.class);
+        Booking targetBooking = query.setParameter("id", sourceBookingDto.getId()).getSingleResult();
+
+        assertThat(targetBooking.getStart(), equalTo(sourceBookingDto.getStart()));
+        assertThat(targetBooking.getEnd(), equalTo(sourceBookingDto.getEnd()));
+        assertThat(targetBooking.getItem().getName(), equalTo(sourceBookingDto.getItem().getName()));
+    }
+
+    @DisplayName("Должен менять статус бронирования на APPROVED")
+    @Test
+    void shouldSetApprovedInStatus() {
+        // given
+        User booker = new User();
+        booker.setName("Ivan");
+        booker.setEmail("ivan@mail.ru");
+        entityManager.persist(booker);
+
+        User owner = new User();
+        owner.setName("Petr");
+        owner.setEmail("petr@mail.ru");
+        entityManager.persist(owner);
+
+        Item item1 = new Item();
+        item1.setName("Item1 name");
+        item1.setDescription("Item1 description");
+        item1.setOwner(owner);
+        item1.setAvailable(true);
+        entityManager.persist(item1);
 
 
+        Booking booking = new Booking();
+        booking.setBooker(booker);
+        booking.setStart(LocalDateTime.of(2024, 12, 12, 12, 12, 12));
+        booking.setEnd(LocalDateTime.of(2024, 12, 13, 13, 13, 13));
+        booking.setItem(item1);
+        booking.setStatus(BookingStatus.WAITING);
+
+        entityManager.persist(booking);
+
+        entityManager.flush();
+
+        //when
+        BookingDto sourceBookingDto = bookingService.setApproved(booker.getId(), owner.getId(), true);
+
+        //then
+        TypedQuery<Booking> query = entityManager
+                .createQuery("Select b from Booking b where b.id = :id",
+                        Booking.class);
+        Booking targetBooking = query.setParameter("id", sourceBookingDto.getId()).getSingleResult();
+
+        assertThat(targetBooking.getStatus(), equalTo(sourceBookingDto.getStatus()));
     }
 }
