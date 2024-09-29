@@ -42,8 +42,6 @@ class UserServiceImplTest {
         assertThat(userFromDB.getId(), notNullValue());
         assertThat(userFromDB.getName(), equalTo(userUpdate.getName()));
         assertThat(userFromDB.getEmail(), equalTo(userUpdate.getEmail()));
-
-
     }
 
     private User makeUser(String name, String email) {
@@ -52,5 +50,4 @@ class UserServiceImplTest {
         user.setEmail(email);
         return user;
     }
-
-} 
+}
