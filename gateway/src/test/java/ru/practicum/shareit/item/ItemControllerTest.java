@@ -139,7 +139,7 @@ public class ItemControllerTest {
 
         ResponseEntity<Object> response = createResponseEntity(List.of(itemDtos.getFirst()));
 
-        when(itemClient.searchItems(anyLong(), anyString())) .thenReturn(response);
+        when(itemClient.searchItems(anyLong(), anyString())).thenReturn(response);
 
         mvc.perform(get("/items/search")
                         .header("X-Sharer-User-Id", 1L)
