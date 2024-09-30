@@ -27,18 +27,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository items;
 
     @Override
-    public ItemRequest findById(Long id) {
-
-        Optional<ItemRequest> optionalItemRequest = requests.findById(id);
-        log.info("Поиск вещи с id = {}", id);
-        if (optionalItemRequest.isEmpty()) {
-            log.error("Запрос вещи с id = {} не найден", id);
-            throw new NotFoundException("Запрос вещи с id = " + id + " не найден");
-        }
-        return optionalItemRequest.get();
-    }
-
-    @Override
     public ItemRequestDto save(long sharerId, ItemRequestDto itemRequestDto) {
         ItemRequest itemRequest = ItemRequestMapper.mapToItemRequest(itemRequestDto);
         Optional<User> optionalRequestor = users.findById(sharerId);

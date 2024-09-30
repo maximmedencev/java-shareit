@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.exception.NoAvailableFieldException;
 import ru.practicum.shareit.exception.NoItemBookingsForThisUserException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.CommentDto;
@@ -139,6 +140,29 @@ class ItemServiceImplTest {
 
     }
 
+
+    @DisplayName("Должен выюрасывать исключение, если не указано поле available при создании")
+    @Test
+    void shouldThrowNoAvailableFieldExceptionWhenNoAvailableFieldWhenCreateItem() {
+        // given
+        User owner = new User();
+        owner.setName("Owner User");
+        owner.setEmail("ivan@mail.ru");
+        entityManager.persist(owner);
+        entityManager.flush();
+
+        ItemDtoParam itemDtoParam = ItemDtoParam.builder()
+                .description("Item1 description")
+                .name("Item1 name")
+                .build();
+
+        // when then
+        assertThrows(NoAvailableFieldException.class, () -> {
+            itemService.create(owner.getId(), itemDtoParam);
+        }, "Отсутствие поля available должно приводить к исключению");
+
+    }
+
     @DisplayName("Должен считывать данные вещи с указанным id")
     @Test
     void shouldReadItemWhenSpecifiedId() {
@@ -170,7 +194,7 @@ class ItemServiceImplTest {
 
     }
 
-    @DisplayName("Должен создавать вещь")
+    @DisplayName("Должен обновлять данные вещи")
     @Test
     void shouldUpdateItem() {
         // given

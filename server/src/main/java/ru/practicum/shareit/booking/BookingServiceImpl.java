@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
             throw new InvalidDataException(". Дата начала бронирования такая же, как дата конца.");
         }
 
-        if (bookingParamDto.getStart().isBefore(LocalDateTime.now())) {
+        if (bookingParamDto.getEnd().isBefore(LocalDateTime.now())) {
             log.error("Дата конца бронирования не может быть в прошлом {}", bookingParamDto);
             throw new InvalidDataException(". Дата конца бронирования не может быть в прошлом.");
         }

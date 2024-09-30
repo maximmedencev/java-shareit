@@ -5,7 +5,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import java.util.Collection;
 
 public interface ItemRequestService {
-    ItemRequest findById(Long id);
 
     ItemRequestDto save(long sharerId, ItemRequestDto itemRequestDto);
 

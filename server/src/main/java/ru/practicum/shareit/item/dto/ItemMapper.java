@@ -22,15 +22,6 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item mapToItem(ItemDto itemDto) {
-        Item item = new Item();
-        item.setId(itemDto.getId());
-        item.setName(itemDto.getName());
-        item.setDescription(itemDto.getDescription());
-        item.setAvailable(itemDto.getAvailable());
-        return item;
-    }
-
     public static Item itemDtoParamToItem(ItemDtoParam itemDtoParam) {
         Item item = new Item();
         item.setName(itemDtoParam.getName());

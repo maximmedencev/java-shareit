@@ -8,11 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.WrongUserException;
 import ru.practicum.shareit.item.dto.ItemIdAndNameDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.dto.UserIdOnlyDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,7 +37,7 @@ public class ItemRequestServiceImplTest {
 
     @Test
     @DisplayName("Должен возвращать все запросы пользователя")
-    void shouldReadAllUserItems() {
+    void shouldReadAllUserItemRequests() {
         // given
         User user = new User();
         user.setName("Ivan");
@@ -131,6 +133,78 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
+    @DisplayName("Должен выбрасывать исключение, если пользователь не найден во время чтения всех его запросов")
+    void shouldThrowWrongUserExceptionWhenReadAllUserItemRequestsWhenSpecifiedWrongUserId() {
+        assertThrows(WrongUserException.class, () -> {
+            itemRequestService.getAllUserRequests(999);
+        }, "Если не найден пользователь, то выбрасывается исключение");
+
+    }
+
+
+    @Test
+    @DisplayName("Должен создавать запрос вещи")
+    void shouldCreateItemRequest() {
+        // given
+        User user = new User();
+        user.setName("Ivan");
+        user.setEmail("ivan@mail.ru");
+        entityManager.persist(user);
+
+        User requestor = new User();
+        requestor.setName("Petr");
+        requestor.setEmail("petr@mail.ru");
+        entityManager.persist(requestor);
+
+        entityManager.flush();
+
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
+        itemRequestDto.setCreated(LocalDateTime.of(2024, 12, 12, 12, 12, 12));
+        itemRequestDto.setDescription("request1 description");
+        itemRequestDto.setRequestor(new UserIdOnlyDto(requestor.getId()));
+
+        //when
+        ItemRequestDto sourceItemRequest = itemRequestService.save(user.getId(), itemRequestDto);
+        //then
+        TypedQuery<ItemRequest> queryItemRequest = entityManager
+                .createQuery("Select i from ItemRequest i where i.id = :id", ItemRequest.class);
+        ItemRequest targetItemRequest = queryItemRequest
+                .setParameter("id", sourceItemRequest.getId())
+                .getSingleResult();
+
+        assertThat(targetItemRequest.getDescription(), equalTo(sourceItemRequest.getDescription()));
+        assertThat(targetItemRequest.getCreated(), equalTo(sourceItemRequest.getCreated()));
+        assertThat(targetItemRequest.getRequestor().getId(), equalTo(sourceItemRequest.getRequestor().getId()));
+    }
+
+    @Test
+    @DisplayName("Должен должен выбрасывать исключение, если пользователь не найден во время создания вещи")
+    void shouldThrowNotFoundExceptionWhenSpecifiedWrongUserIdWhenCreate() {
+        // given
+        User user = new User();
+        user.setName("Ivan");
+        user.setEmail("ivan@mail.ru");
+        entityManager.persist(user);
+
+        User requestor = new User();
+        requestor.setName("Petr");
+        requestor.setEmail("petr@mail.ru");
+        entityManager.persist(requestor);
+
+        entityManager.flush();
+
+        ItemRequestDto itemRequestDto = new ItemRequestDto();
+        itemRequestDto.setCreated(LocalDateTime.of(2024, 12, 12, 12, 12, 12));
+        itemRequestDto.setDescription("request1 description");
+        itemRequestDto.setRequestor(new UserIdOnlyDto(requestor.getId()));
+
+        //when then
+        assertThrows(NotFoundException.class, () -> {
+            itemRequestService.save(999, itemRequestDto);
+        }, "Если не найден пользователь, то выбрасывается исключение");
+    }
+
+    @Test
     @DisplayName("Должен возвращать запрос по id")
     void shouldReturnItemRequestWhenSpecifiedId() {
         // given
@@ -170,6 +244,14 @@ public class ItemRequestServiceImplTest {
                 .getSingleResult();
 
         assertThat(targetItemRequest.getDescription(), equalTo(sourceItemRequest.getDescription()));
+    }
+
+    @Test
+    @DisplayName("Должен выкидывать исключение, если запрос не найден по id")
+    void shouldThrowNotFoundExceptionWhenItemRequestWhenSpecifiedWrongId() {
+        assertThrows(NotFoundException.class, () -> {
+            itemRequestService.getRequest(999);
+        }, "Если не найден запрос с таким id, то выбрасывается исключение");
     }
 
     @Test

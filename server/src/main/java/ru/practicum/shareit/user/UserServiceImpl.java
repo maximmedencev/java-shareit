@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateEmailException;
 import ru.practicum.shareit.exception.InvalidDataException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,6 +63,13 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserDto update(long userId, User updUser) {
+        Optional<User> optionalCurrentUser = userRepository.findById(userId);
+        if (optionalCurrentUser.isEmpty()) {
+            throw new NotFoundException("Пользователь с id = " + userId + " не найден");
+        }
+
+        User currentUser = optionalCurrentUser.get();
+
         updUser.setId(userId);
 
         UserDto userDto = UserMapper.mapToUserDto(updUser);
@@ -77,13 +86,15 @@ public class UserServiceImpl implements UserService {
                 throw new DuplicateEmailException("Email " + updUser.getEmail() + " уже занят");
             }
         } else {
-            userRepository.updateName(userId, updUser.getName());
+            updUser.setEmail(currentUser.getEmail());
+            userRepository.save(updUser);
             log.info("Обновлен пользователь {}", userDto);
             return userDto;
         }
 
         if (updUser.getName() == null && updUser.getEmail() != null) {
-            userRepository.updateEmail(userId, updUser.getEmail());
+            updUser.setName(currentUser.getName());
+            userRepository.save(updUser);
             log.info("Обновлен пользователь {}", userDto);
             return userDto;
         }
