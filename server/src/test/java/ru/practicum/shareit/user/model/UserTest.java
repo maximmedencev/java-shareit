@@ -11,7 +11,7 @@ public class UserTest {
 
     @DisplayName("Должен быть равным объекту с таким же id")
     @Test
-    void shouldEqual(){
+    void shouldEqual() {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("user1 name");
@@ -25,7 +25,7 @@ public class UserTest {
 
     @DisplayName("Не должен быть равным объекту с другим id")
     @Test
-    void shouldNotEqual(){
+    void shouldNotEqual() {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("user1 name");
@@ -39,7 +39,7 @@ public class UserTest {
 
     @DisplayName("Должен возвращать корректный хэшкод")
     @Test
-    void shouldReturnCorrectHashcode(){
+    void shouldReturnCorrectHashcode() {
         User user1 = new User();
         user1.setId(1L);
         user1.setName("user1 name");
