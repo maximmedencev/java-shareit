@@ -10,7 +10,7 @@ public class ItemTest {
 
     @DisplayName("Должен быть равным объекту с таким же id")
     @Test
-    void shouldEqual(){
+    void shouldEqual() {
         Item item1 = new Item();
         item1.setId(1L);
         item1.setName("item1 name");
@@ -24,7 +24,7 @@ public class ItemTest {
 
     @DisplayName("Не должен быть равным объекту с другим id")
     @Test
-    void shouldNotEqual(){
+    void shouldNotEqual() {
         Item item1 = new Item();
         item1.setId(1L);
         item1.setName("item1 name");
@@ -38,7 +38,7 @@ public class ItemTest {
 
     @DisplayName("Должен возвращать корректный хэшкод")
     @Test
-    void shouldReturnCorrectHashcode(){
+    void shouldReturnCorrectHashcode() {
         Item item1 = new Item();
         item1.setId(1L);
         item1.setName("item1 name");
