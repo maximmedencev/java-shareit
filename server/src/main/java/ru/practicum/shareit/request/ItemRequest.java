@@ -7,14 +7,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -34,6 +38,10 @@ public class ItemRequest {
     private User requestor;
     @Column(name = "created")
     private LocalDateTime created;
+    @OneToMany
+    @ToString.Exclude
+    @JoinColumn(name = "request_id")
+    private List<Item> items = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

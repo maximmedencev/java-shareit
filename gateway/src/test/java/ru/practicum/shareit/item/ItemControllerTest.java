@@ -45,12 +45,14 @@ public class ItemControllerTest {
                 .id(1L)
                 .name("Item1 name")
                 .description("item1 description")
+                .available(true)
                 .build();
 
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .id(1L)
                 .name("Item1 name")
                 .description("item1 description")
+                .available(true)
                 .build();
 
         ResponseEntity<Object> response = createResponseEntity(itemDto);
@@ -100,12 +102,14 @@ public class ItemControllerTest {
                 .id(1L)
                 .name("updated Item1 name")
                 .description("updated item1 description")
+                .available(true)
                 .build();
 
         ItemDto updatedItemDto = ItemDto.builder()
                 .id(1L)
                 .name("updated Item1 name")
                 .description("updated item1 description")
+                .available(true)
                 .build();
 
         ResponseEntity<Object> response = createResponseEntity(updatedItemDto);

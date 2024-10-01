@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.dto;
 
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserIdOnlyDto;
@@ -14,7 +15,10 @@ public class ItemRequestMapper {
         itemRequestDto.setDescription(itemRequest.getDescription());
         itemRequestDto.setRequestor(new UserIdOnlyDto(itemRequest.getRequestor().getId()));
         itemRequestDto.setCreated(itemRequest.getCreated());
-        itemRequestDto.setItems(new ArrayList<>());
+        itemRequestDto.setItems(itemRequest.getItems()
+                .stream()
+                .map(ItemMapper::mapToItemIdAndNameDto)
+                .toList());
         return itemRequestDto;
     }
 

@@ -42,7 +42,7 @@ public class Item {
     @OneToMany
     @ToString.Exclude
     @JoinColumn(name = "item_id")
-    List<Comment> comments = new ArrayList<>();
+    private List<Comment> comments = new ArrayList<>();
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @JoinColumn(name = "request_id")

@@ -64,6 +64,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
         userRequests.forEach(request -> request.setItems(items.findByRequestId(request.getId()).stream()
                 .map(ItemMapper::mapToItemIdAndNameDto).toList()));
+
         return userRequests;
     }
 
