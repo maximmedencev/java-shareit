@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+volumes
+checkstyle.xml
 
 ### STS ###
 .apt_generated
@@ -31,6 +33,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-### DB ###
-/volumes/
